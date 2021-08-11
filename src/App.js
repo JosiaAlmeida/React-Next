@@ -1,58 +1,45 @@
-import logo from './logo.svg';
 import './App.css';
 import { Component } from 'react'
 class App extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      name: 'Josia Almeida',
-      counter: 0
-    }
-    this.handleChangeClick = this.handleChangeClick.bind(this)
-    this.handleChangeName = this.handleChangeName.bind(this)
+  state = {
+    posts: [],
   }
-  handleChangeName() {
-    const { name } = this.state
-    this.setState({ name: 'Josué' })
+  loadPosts = async () => {
+    const postResponse = fetch("https://jsonplaceholder.typicode.com/posts")
+    const imgResponse = fetch("https://jsonplaceholder.typicode.com/photos")
+    
+    const [posts, photos] = await  Promise.all([postResponse, imgResponse])
+    const postsjson = await posts.json()
+    const photojson = await photos.json()
+
+    const postsAndPhotos = postsjson.map((post, i)=>{
+      return {...post, cover: photojson[i].url}
+    })
+    this.setState({posts: postsAndPhotos})
+    
   }
-  handleChangeClick() {
-    const { counter } = this.state
-    this.setState({ counter: counter + 1 })
+  componentDidMount() {
+    this.loadPosts()
   }
   render() {
-    const { name, counter } = this.state
+    const { posts } = this.state
     return (
-      <div className="App">
-        <p onClick={this.handleChangeName}>
-          Welcome {name} - {counter}
-        </p>
-        <button onClick= {this.handleChangeClick}>
-          Click
-        </button>
+      <div className="container">
+        <div className="posts">
+          {
+            posts.map(x => (
+              <div className="post" key={x.id}>
+                <div className="post-content">
+                  <img src={x.cover} alt= {x.title} />
+                  <h1> {x.title} </h1>
+                  <p> {x.body} </p>
+                </div>
+              </div>
+            ))
+          }
+        </div>
       </div>
     );
   }
 }
-
-/*function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}*/
-
 export default App;
