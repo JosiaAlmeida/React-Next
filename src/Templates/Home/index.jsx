@@ -1,5 +1,5 @@
 import './style.css';
-import { Component,useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { loadPost } from '../../utils/load-post.js'
 import { Post } from '../../components/Post'
 import { Button } from '../../components/Button/index';
@@ -9,24 +9,25 @@ const Home = () => {
   const [posts, setposts] = useState([])
   const [allPost, setallPost] = useState([])
   const [page, setpage] = useState(0)
-  const [postsPerPage, setpostsPerPage] = useState(2)
+  const [postsPerPage] = useState(2)
   const [Blocked, setBlocked] = useState(false)
   const [search, setsearch] = useState('')
 
-  const loadPosts = async () => {
+  const loadPosts = useCallback(async () => {
     const postsAndPhotos = await loadPost()
     setposts(postsAndPhotos.slice(page, postsPerPage))
     setallPost(postsAndPhotos)
-  }
-useEffect(() => {
-  loadPosts()
-}, [])
+  },[])
+
+  useEffect(() => {
+    loadPosts()
+  }, [loadPosts, postsPerPage])
   const loadMorePost = () => {
     const nextPage = page + postsPerPage
     posts.push(...allPost.slice(nextPage, nextPage + postsPerPage))
     setposts(posts)
     setpage(nextPage)
-    if (posts.length == allPost.length) setBlocked(true)
+    if (posts.length === allPost.length) setBlocked(true)
   }
   const handlesearchPost = async (e) => {
     const { value } = e.target
