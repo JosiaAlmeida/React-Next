@@ -9,7 +9,7 @@ export const Input = ({search, handlesearchPost}) => {
                     </>
                 )
             }
-            < input type="text" className='text-input' value={search} onChange={handlesearchPost} />
+            < input type="text" className='text-input' placeholder='type your search' value={search} onChange={handlesearchPost} />
         </>
     );
 }
