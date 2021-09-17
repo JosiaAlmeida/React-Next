@@ -19,8 +19,8 @@ const Home = () => {
     setallPost(postsAndPhotos)
   },[])
 
-  useEffect(() => {
-    loadPosts()
+  useEffect(async() => {
+    await loadPosts()
   }, [loadPosts, postsPerPage])
   const loadMorePost = () => {
     const nextPage = page + postsPerPage
@@ -40,7 +40,12 @@ const Home = () => {
       <div className="searchContainer">
         <Input search={search} handlesearchPost={handlesearchPost} />
       </div>
-      <Post posts={posts} />
+      {
+        posts.length !== 0 && <Post posts={posts} />
+      }
+      {
+        posts.length === 0 && <p>Não existem posts</p>
+      }
       <div className="container-button" >
         <Button disabled={Blocked} onClick={loadMorePost} />
       </div>
